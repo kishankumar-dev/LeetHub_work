@@ -1,25 +1,22 @@
-class Solution:
-    def findKthNumber(self, n: int, k: int) -> int:
-        def count_prefix(p, n):
-            count = 0
-            cur = p
-            next_p = p + 1
-            while cur <= n:
-                count += min(next_p, n + 1) - cur
-                cur *= 10
-                next_p *= 10
-            return count
-        
-        current = 1
-        k -= 1
-        
-        while k > 0:
-            count = count_prefix(current, n)
-            if k >= count:
-                k -= count
-                current += 1
-            else:
-                current *= 10
-                k -= 1
-        
-        return current
+class Solution(object):
+    def findKthNumber(self, n, k):
+        return self.solve(0, n, k)
+
+    def solve(self, current, n, k):
+        if k == 0:
+            return current // 10
+
+        for i in range(max(current, 1), current + 10):
+            count = self.numOfChildren(i, i + 1, n)
+            if count >= k:
+                return self.solve(i * 10, n, k - 1)
+            k -= count
+
+        return -1  
+
+    def numOfChildren(self, current, neighbour, n):
+        if neighbour > n:
+            if current > n:
+                return 0
+            return n - current + 1
+        return (neighbour - current) + self.numOfChildren(current * 10, neighbour * 10, n)
