@@ -1,10 +1,16 @@
 class Solution:
     def makeFancyString(self, s: str) -> str:
-        result = []
-        
-        for char in s:
-            if len(result) < 2 or not (result[-1] == result[-2] == char):
-                result.append(char)
-        
-        return ''.join(result)
-        
+        d=defaultdict(int)
+        k=''
+        a=0
+        l=s[0]
+        for i in s:
+            if i==l:
+                a+=1
+                if a<3:
+                    k+=i
+            elif i!=l:
+                a=1
+                k+=i
+                l=i
+        return k
