@@ -1,28 +1,27 @@
-class Solution(object):
-    def maximumGain(self, s, x, y):
-        a_count = 0
-        b_count = 0
-        lesser = min(x, y)
-        result = 0
+class Solution:
+    def maximumGain(self, s: str, x: int, y: int) -> int:
+        score = 0
+        ch1, ch2 = 'a', 'b'
+        cnt1 = cnt2 = 0
 
-        for c in s:
-            if c > 'b':
-                result += min(a_count, b_count) * lesser
-                a_count = 0
-                b_count = 0
-            elif c == 'a':
-                if x < y and b_count > 0:
-                    b_count -= 1
-                    result += y
-                else:
-                    a_count += 1
-            elif c == 'b':
-                if x > y and a_count > 0:
-                    a_count -= 1
-                    result += x
-                else:
-                    b_count += 1
+        if x < y:
+            x, y = y, x
+            ch1, ch2 = 'b', 'a'
 
-        result += min(a_count, b_count) * lesser
-        return result
-        
+        for ch in s:
+            if ch == ch1:
+                cnt1 += 1
+            elif ch == ch2:
+                if cnt1 > 0:
+                    cnt1 -= 1
+                    score += x
+                else:
+                    cnt2 += 1
+            else:
+                score += min(cnt1, cnt2) * y
+                cnt1 = cnt2 = 0
+
+        if cnt1 != 0:
+            score += min(cnt1, cnt2) * y
+
+        return score
