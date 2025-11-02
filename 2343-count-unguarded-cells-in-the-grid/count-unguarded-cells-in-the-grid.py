@@ -1,30 +1,30 @@
 class Solution:
     def countUnguarded(self, m: int, n: int, guards: List[List[int]], walls: List[List[int]]) -> int:
-        # Initialize grid: 0 = unoccupied, 1 = wall/guard, 2 = guarded
-        grid = [[0] * n for _ in range(m)]
-        
-        # Place guards and walls in the grid
-        for r, c in guards:
-            grid[r][c] = 1  # Guard
-        for r, c in walls:
-            grid[r][c] = 1  # Wall
-        
-        # Directions for cardinal movement: up, down, left, right
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        
-        # Mark cells guarded by the guards
-        for r, c in guards:
-            for dr, dc in directions:
-                nr, nc = r + dr, c + dc
-                while 0 <= nr < m and 0 <= nc < n:
-                    if grid[nr][nc] == 1:  # Stop at a wall or another guard
+        def idx(r, c):
+            return r*n+c
+        d=(0, 1, 0,-1, 0)
+        def cross(r, c):
+            nonlocal comp
+            for a in range(4):
+                di, dj=d[a], d[a+1]
+                i, j=r+di, c+dj
+                while True:
+                    pos=idx(i, j)
+                    if i<0 or i>=m or j<0 or j>=n or grid[pos]=='X':
                         break
-                    if grid[nr][nc] == 0:  # Mark as guarded
-                        grid[nr][nc] = 2
-                    nr += dr
-                    nc += dc
-        
-        # Count unoccupied and unguarded cells
-        unguarded_count = sum(1 for r in range(m) for c in range(n) if grid[r][c] == 0)
-        
-        return unguarded_count
+                    comp-=grid[pos]==' '
+                    grid[pos]='V'
+                    i+=di
+                    j+=dj
+        comp=m*n
+        grid=[' ']*(m*n)
+
+        for ij in walls:
+            grid[idx(ij[0], ij[1])]='X'
+            comp-=1
+        for ij in guards:
+            grid[idx(ij[0], ij[1])]='X'
+            comp-=1
+        for ij in guards:
+            cross(ij[0], ij[1])
+        return comp             
