@@ -1,37 +1,44 @@
 class Solution:
     def maxKDivisibleComponents(self, n: int, edges: List[List[int]], values: List[int], k: int) -> int:
-        # Build the adjacency list for the tree
-        tree = defaultdict(list)
-        for a, b in edges:
-            tree[a].append(b)
-            tree[b].append(a)
+        """
+        Find maximum number of components when splitting a tree
+        where each component's sum is divisible by k
         
-        # Initialize variables
-        visited = set()
-        self.components = 0  # Track the number of valid components
+        :type n: int - number of nodes
+        :type edges: List[List[int]] - tree edges
+        :type values: List[int] - node values
+        :type k: int - divisor
+        :rtype: int - maximum components
+        """
+        h = defaultdict(list)  # adjacency list for tree
+        for i, j in edges:
+            h[i].append(j)
+            h[j].append(i)
         
-        def dfs(node):
-            # Mark the node as visited
-            visited.add(node)
-            # Start the subtree sum with the node's value
-            subtree_sum = values[node]
+        r = 0  # result: count of valid components
+        
+        def dfs(cur, parent):
+            """
+            DFS to calculate subtree sums and count valid splits
+            cur = current node
+            parent = parent node (to avoid revisiting)
+            returns: subtree sum modulo k
+            """
+            t = values[cur]  # start with current node's value
             
-            for neighbor in tree[node]:
-                if neighbor not in visited:
-                    # Recursively calculate the subtree sum
-                    child_sum = dfs(neighbor)
-                    # If the child's sum is divisible by k, it's a valid component
-                    if child_sum % k == 0:
-                        self.components += 1
-                    else:
-                        subtree_sum += child_sum
+            # 🔄 EXPLORE ALL CHILDREN
+            for child in h[cur]:
+                if child != parent:  # avoid going back to parent
+                    t += dfs(child, cur)  # add child's subtree sum
             
-            return subtree_sum
+            # 🎯 CHECK DIVISIBILITY: Can we split here?
+            if t % k == 0:
+                nonlocal r
+                r += 1  # found a valid component!
+                return 0  # "cut" this component, don't pass sum up
+            
+            return t  # pass sum to parent
         
-        # Perform DFS from an arbitrary root (node 0)
-        total_sum = dfs(0)
-        # If the entire tree's sum is divisible by k, increment components
-        if total_sum % k == 0:
-            self.components += 1
-        
-        return self.components
+        # 🚀 START DFS from node 0
+        dfs(0, -1)
+        return r
