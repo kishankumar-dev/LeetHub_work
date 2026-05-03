@@ -1,4 +1,4 @@
 class Solution:
     def rotateString(self, s: str, goal: str) -> bool:
-        s += s
-        return len(s) / 2 == len(goal) and goal in s
+        return len(s)==len(goal) and (s+s).find(goal)!=-1
+        
