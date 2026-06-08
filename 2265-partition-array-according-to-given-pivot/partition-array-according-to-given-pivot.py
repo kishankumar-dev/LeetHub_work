@@ -1,15 +1,16 @@
-class Solution(object):
-    def pivotArray(self, nums, pivot):
+class Solution:
+    def pivotArray(self, nums: List[int], pivot: int) -> List[int]:
         n=len(nums)
-        leftArr=[]
-        rightArr=[]
-        pivCnt=0
-        for i in range(0, n):
-            if nums[i]==pivot:
-                pivCnt+=1
-            elif nums[i]>pivot:
-                rightArr.append(nums[i])                
+        if n==1: return nums
+        R=[]
+        l, m=0, 0
+        for x in nums:
+            if x<pivot:
+                nums[l]=x
+                l+=1
+            elif x>pivot:
+                R.append(x)
             else:
-                leftArr.append(nums[i])                
+                m+=1
+        return nums[:l]+[pivot]*m+R
         
-        return leftArr+[pivot]*pivCnt+rightArr
