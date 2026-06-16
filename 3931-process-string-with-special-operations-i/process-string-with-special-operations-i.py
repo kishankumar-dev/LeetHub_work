@@ -1,16 +1,18 @@
 class Solution:
     def processStr(self, s: str) -> str:
-        res = []
-        n = len(s)
-        for i in range(n):
-            ch = s[i]
-            if ch == '*':
-                if len(res) != 0:
-                    res.pop()
-            elif ch == '#':
-                res.extend(res)
-            elif ch == '%':
-                res.reverse()
-            elif 'a' <= ch <= 'z':
-                res.append(ch)
-        return ''.join(res)
+        ans = ""
+
+        for x in s:
+            if x == '*':
+                ans = ans[:-1]
+
+            elif x == '#':
+                ans += ans
+
+            elif x == '%':
+                ans = ans[::-1]
+
+            else:
+                ans +=x
+
+        return ans
